@@ -1,12 +1,20 @@
 
 let view = new function() {
-	this.init = function(searches) {
+	this.init = function(searches, search, searchNews) {
 		let stored = $('#recherches-stockees');
 
 		for(var i = 0; i < searches.length; i++) {
 			this.createSearch(searches[i])
 				.appendTo(stored);
 		}
+
+		$('#zone_saisie')
+			.keyup(function() {
+				controller.setSearch($(this).val());
+			})
+			.val(search);
+
+		this.updateResults(searchNews);
 	}
 
 	this.createSearch = function(value) {
@@ -15,14 +23,14 @@ let view = new function() {
 
 		$(document.createElement('label'))
 			.text(value)
-			.on('click', function(){
+			.on('click', function() {
 				view.selectSearch(p);
 			}).appendTo(p);
 
 		$(document.createElement('img'))
 			.attr('src', 'images/croix30.jpg')
 			.addClass('icone-croix')
-			.on('click', function(){
+			.on('click', function() {
 				view.removeSearch(p);
 			}).appendTo(p);
 
@@ -39,6 +47,16 @@ let view = new function() {
 	}
 
 	this.searchNews = function() {
+		let value = $('#zone_saisie').val();
+
+		$('#resultats').empty();
+		$('#wait').css('display', 'block');
+		controller.searchNews(value);
+	}
+
+	this.updateResults = function(results) {
+		$('#wait').css('display', 'none');
+		$('#resultats').text(results);
 	}
 
 	this.selectSearch = function(e) {
@@ -46,7 +64,7 @@ let view = new function() {
 			.first()
 			.text();
 
-		if(controller.selectSearch(value)) {
+		if(controller.setSearch(value)) {
 			$('#zone_saisie').val(value);
 		}
 	}

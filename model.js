@@ -6,28 +6,52 @@ let model = new function() {
 
 	this.init = function() {
 		this.unserializeSearches();
-		//this.unserializeSearch();
-		//this.unserializeSearchNews();
+		this.unserializeSearch();
+		this.unserializeSearchNews();
+	}
+
+	this.unserializeArray = function(name) {
+		var array = JSON.parse(localStorage.getItem(name));
+
+		if(array == null) {
+			array = [];
+		}
+
+		return array;
+	}
+
+	this.serializeArray = function(name, array) {
+		localStorage.setItem(name, JSON.stringify(array));
+	}
+
+	this.unserializeSearch = function() {
+		this.search = localStorage.getItem('search');
 	}
 
 	this.unserializeSearches = function() {
-		this.searches = JSON.parse(localStorage.getItem('searches'));
-
-		if(this.searches == null) {
-			this.searches = [];
-		}
+		this.searches = this.unserializeArray('searches');
 	}
 
 	this.serializeSearches = function() {
-		localStorage.setItem('searches', JSON.stringify(this.searches));
-		console.log(localStorage.getItem('searches'));
+		this.serializeArray('searches', this.searches);
+	}
+
+	this.serializeSearch = function() {
+		localStorage.setItem('search', this.search);
+	}
+
+	this.unserializeSearchNews = function() {
+		this.searchNews = this.unserializeArray('searchNews');
+	}
+
+	this.serializeSearchNews = function() {
+		this.serializeArray('searchNews', this.searchNews);
 	}
 
 	this.saveSearch = function(value) {
 		if(value.length != 0
 			&& this.searches.indexOf(value) == -1) {
 			this.searches.push(value);
-
 			this.serializeSearches();
 
 			return true;
@@ -45,8 +69,16 @@ let model = new function() {
 		return true;
 	}
 
-	this.selectSearch = function(value) {
+	this.setSearch = function(value) {
 		this.search = value;
+		this.serializeSearch();
+
+		return true;
+	}
+
+	this.setSearchNews = function(results) {
+		this.searchNews = results
+		this.serializeSearchNews();
 
 		return true;
 	}
