@@ -26,7 +26,7 @@ function ajouter_recherche() {
 			}).appendTo(p);
 
 		p.appendTo('#recherches-stockees');
-		$.cookie('recherches',value,{
+		$.cookie('recherches',JSON.stringify(recherches),{
 			expires: 1000
 		})
 	}
@@ -41,7 +41,7 @@ function supprimer_recherche(e) {
 
 	let index = recherches.indexOf(recherche);
 	recherches.splice(index, 1);
-	$.cookie('recherches',null);
+	$.cookie('recherches',JSON.stringify(recherches));
 }
 
 
