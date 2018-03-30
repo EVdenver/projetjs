@@ -41,6 +41,7 @@ function supprimer_recherche(e) {
 
 	let index = recherches.indexOf(recherche);
 	recherches.splice(index, 1);
+	$.cookie('recherches',null);
 }
 
 
