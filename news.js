@@ -26,6 +26,9 @@ function ajouter_recherche() {
 			}).appendTo(p);
 
 		p.appendTo('#recherches-stockees');
+		$.cookie('recherches',value,{
+			expires: 1000
+		})
 	}
 }
 
