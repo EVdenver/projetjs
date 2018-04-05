@@ -45,7 +45,15 @@ function supprimer_recherche(e) {
 }
 
 
-function selectionner_recherche(e) { 
+function selectionner_recherche(e) {
+	let recherche = e.children()
+		.first()
+		.text();
+	
+	$('#zone_saisie)').val() = recherche;
+	
+	recherche_courante = recherche;
+
 }
 
 
@@ -59,7 +67,7 @@ function init() {
 			$(document.createElement('label'))
 				.text(recherches[i])
 				.on('click',function(){
-					selectionner_recherches(p);
+					selectionner_recherche(p);
 				}).appendTo(p);
 
 			$(document.createElement('img'))
