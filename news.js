@@ -66,7 +66,7 @@ function init() {
 				.attr('src','croix30.jpg')
 				.addClass('icone-croix')
 				.on('click',function(){
-					supprimer_recherches(p);
+					supprimer_recherche(p);
 				}).appendTo(p);
 
 			p.appendTo('#recherches-stockees');
