@@ -1,4 +1,16 @@
 
+function decodeHtmlEntity(str) {
+  return str.replace(/&#(\d+);/g, function(match, dec) {
+    return String.fromCharCode(dec);
+  });
+}
+
+function decodeEntities(encodedString) {
+    var textArea = document.createElement('textarea');
+    textArea.innerHTML = encodedString;
+    return decodeHtmlEntity(textArea.value);
+}
+
 let model = new function() {
 	this.searches = [];
 	this.search;
@@ -77,6 +89,11 @@ let model = new function() {
 	}
 
 	this.setSearchNews = function(results) {
+		for(var i = 0; i < results.length; i++) {
+			console.log(results[i]);
+			results[i].url = decodeEntities(results[i].url);
+			console.log(results[i]);
+		}
 		this.searchNews = results
 		this.serializeSearchNews();
 

@@ -28,14 +28,14 @@ let view = new function() {
 
 		$(document.createElement('label'))
 			.text(value)
-			.on('click', function() {
+			.click(function() {
 				view.selectSearch(p);
 			}).appendTo(p);
 
 		$(document.createElement('img'))
 			.attr('src', 'images/croix30.jpg')
 			.addClass('icone-croix')
-			.on('click', function() {
+			.click(function() {
 				view.removeSearch(p);
 			}).appendTo(p);
 
@@ -64,12 +64,20 @@ let view = new function() {
 
 		let img = $(document.createElement('img'))
 			.attr('src', 'images/horloge15.jpg');
+		var action;
 
 		let span = $(document.createElement('span'))
 			.addClass('action_news')
-			.on('click', function() {
+			.click(action = function() {
+				span.off();
 				view.saveNews(news);
 				img.attr('src', 'images/disk15.jpg');
+				span.click(function() {
+					span.off();
+					view.removeNews(news);
+					img.attr('src', 'images/horloge15.jpg');
+					span.click(action);
+				});
 			}).appendTo(p);
 
 		img.appendTo(span);
@@ -87,11 +95,11 @@ let view = new function() {
 	}
 
 	this.saveNews = function(news) {
-		console.log(news);
+		console.log('save' + news.titre);
 	}
 
 	this.removeNews = function(news) {
-		console.log(news);
+		console.log('remove' + news.titre);
 	}
 
 	this.searchNews = function() {
