@@ -12,6 +12,11 @@ let view = new function() {
 			.keyup(function() {
 				controller.setSearch($(this).val());
 			})
+			.keypress(function(e) {
+				if(e.which == 13) {
+					view.searchNews();
+				}
+			})
 			.val(search);
 
 		this.updateResults(searchNews);
@@ -37,6 +42,41 @@ let view = new function() {
 		return p;
 	}
 
+	this.createNews = function(news) {
+		let p = $(document.createElement('p'))
+			.addClass('titre_result');
+
+		let save = function() {
+			view.saveNews(news);
+		};
+
+		$(document.createElement('a'))
+			.attr('href', news.url)
+			.attr('target', '_blank')
+			.addClass('titre_news')
+			.text(news.titre)
+			.appendTo(p);
+
+		$(document.createElement('span'))
+			.addClass('date_news')
+			.text(news.date)
+			.appendTo(p);
+
+		let img = $(document.createElement('img'))
+			.attr('src', 'images/horloge15.jpg');
+
+		let span = $(document.createElement('span'))
+			.addClass('action_news')
+			.on('click', function() {
+				view.saveNews(news);
+				img.attr('src', 'images/disk15.jpg');
+			}).appendTo(p);
+
+		img.appendTo(span);
+
+		return p;
+	}
+
 	this.saveSearch = function() {
 		let value = $('#zone_saisie').val();
 
@@ -44,6 +84,14 @@ let view = new function() {
 			this.createSearch(value)
 				.appendTo('#recherches-stockees');
 		}
+	}
+
+	this.saveNews = function(news) {
+		console.log(news);
+	}
+
+	this.removeNews = function(news) {
+		console.log(news);
 	}
 
 	this.searchNews = function() {
@@ -56,7 +104,12 @@ let view = new function() {
 
 	this.updateResults = function(results) {
 		$('#wait').css('display', 'none');
-		$('#resultats').text(results);
+		let r = $('#resultats');
+
+		for(var i = 0; i < results.length; i++) {
+			view.createNews(results[i])
+				.appendTo(r);
+		}
 	}
 
 	this.selectSearch = function(e) {

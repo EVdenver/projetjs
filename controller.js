@@ -24,6 +24,7 @@ let controller = new function() {
 		$.get('search.php?data=' + value,
 			function(data, status) {
 				if(status == 'success') {
+					console.log(data);
 					controller.updateResults(JSON.parse(data));
 				}
 			}
