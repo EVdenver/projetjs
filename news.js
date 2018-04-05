@@ -50,7 +50,7 @@ function selectionner_recherche(e) {
 		.first()
 		.text();
 	
-	$('#zone_saisie)').val() = recherche;
+	$('#zone_saisie)').val(recherche);
 	
 	recherche_courante = recherche;
 
