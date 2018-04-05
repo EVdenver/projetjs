@@ -50,7 +50,7 @@ function selectionner_recherche(e) {
 		.first()
 		.text();
 	
-	$('#zone_saisie)').val(recherche);
+	$('#zone_saisie').val(recherche);
 	
 	recherche_courante = recherche;
 
@@ -84,10 +84,48 @@ function init() {
 
 
 function rechercher_nouvelles() {
+	$('#resutats').empty();
+	$('#wait').css('display','block');
+	$.get('search.php?data='+$('#zone_saisie').val(),
+		function(data, status){
+			if(status == 'success'){
+				maj_resultats(JSON.parse(data))
+			}
+		}
+	);
 }
 
 
 function maj_resultats(res) {
+	$('#wait').css('display','none');
+	for(var i = 0;i < res.length; i++){
+		let p = $(document.createElement('p'))
+			.addClass('titre_result');
+
+		$(document.createElement('a'))
+			.addClass('titre_news')
+			.attr('href',res[i].url)
+			.attr('target','_blank')
+			.text(res[i].titre)
+			.appendTo(p);
+
+		$(document.createElement('span'))
+			.addClass('date_news')
+			.text(res[i].date)
+			.appendTo(p);
+
+		$(document.createElement('span'))
+			.addClass('action_news')
+			.on('click',function(){
+				sauver_nouvelle(p);
+			}).appendTo(p);
+
+		$(document.createElement('img'))
+			.attr('src','horloge15.jpg')
+			.appendTo(p);
+
+		p.appendTo('#resultats');
+	}
 }
 
 
