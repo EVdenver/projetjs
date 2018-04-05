@@ -51,7 +51,7 @@ function selectionner_recherche(e) {
 
 function init() {
 	if($.cookie('recherches')!= null){
-		recherches = JSON.parse($.cookie('recherches');
+		recherches = JSON.parse($.cookie('recherches'));
 		for(var i = 0;i < recherches.length;i++){
 			let p = $(document.createElement('p'))
 				.addClass('titre-recherche');
@@ -66,6 +66,7 @@ function init() {
 				.on('click',function(){
 					supprimer_recherches(p);
 				}).appendTo(p);
+			p.appendTo('#recherches-stockees');
 		}
 	}
 }
