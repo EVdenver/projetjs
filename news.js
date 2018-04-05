@@ -55,17 +55,20 @@ function init() {
 		for(var i = 0;i < recherches.length;i++){
 			let p = $(document.createElement('p'))
 				.addClass('titre-recherche');
+
 			$(document.createElement('label'))
 				.text(recherches[i])
 				.on('click',function(){
 					selectionner_recherches(p);
 				}).appendTo(p);
+
 			$(document.createElement('img'))
-				.attr('srce','croix30.jpg')
+				.attr('src','croix30.jpg')
 				.addClass('icone-croix')
 				.on('click',function(){
 					supprimer_recherches(p);
 				}).appendTo(p);
+
 			p.appendTo('#recherches-stockees');
 		}
 	}
