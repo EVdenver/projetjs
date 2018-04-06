@@ -54,6 +54,36 @@ function selectionner_recherche(e) {
 	
 	recherche_courante = recherche;
 
+	recherche_courante_news = JSON.parse($.cookie(recherche));
+
+	for(var i = 0; i < recherche_courante_news.length; i++){
+		let p = $(document.createElement('p'))
+				.addClass('titre_result');
+			$(document.createElement('a'))
+				.addClass('titre_news')
+				.attr('href',recherche_courante_news[i].url)
+				.attr('target','_blank')
+				.text(recherche_courante_news[i].title)
+				.appendTo(p);
+
+			$(document.createElement('span'))
+				.addClass('date_news')
+				.text(recherche_courante_news[i].date)
+				.appendTo(p);
+
+			let span = $(document.createElement('span'))
+				.addClass('action_news')
+				.on('click',function(){
+					sauver_nouvelle(this);
+				})
+
+			$(document.createElement('img'))
+				.attr('src','disk15.jpg')
+				.appendTo(span);
+			span.appendTo(p);
+			p.appendTo('#resultats');
+	}
+
 }
 
 
@@ -86,11 +116,16 @@ function init() {
 function rechercher_nouvelles() {
 	$('#resutats').empty();
 	$('#wait').css('display','block');
-	$.get('search.php?data='+$('#zone_saisie').val(),
+	var recherche = $('#zone_saisie').val();
+	val = encodeURI(recherche);
+
+	if($.cookie(recherche)){
+		recherche_courante_news = JSON.parse($.cookie(recherche));
+	}
+
+	$.get('search.php?data='+ val,
 		function(data, status){
-			if(status == 'success'){
-				maj_resultats(JSON.parse(data))
-			}
+			maj_resultats($.parseJSON(data));
 		}
 	);
 }
@@ -98,41 +133,87 @@ function rechercher_nouvelles() {
 
 function maj_resultats(res) {
 	$('#wait').css('display','none');
+	var titre_recherche = [];
+	for(var i = 0; i<recherche_courante_news.length; i++){
+		titre_recherche.push(recherche_courante_news[i].title);
+	}
+
 	for(var i = 0;i < res.length; i++){
 		let p = $(document.createElement('p'))
-			.addClass('titre_result');
+				.addClass('titre_result');
 
-		$(document.createElement('a'))
-			.addClass('titre_news')
-			.attr('href',res[i].url)
-			.attr('target','_blank')
-			.text(res[i].titre)
-			.appendTo(p);
+		        $(document.createElement('a'))
+		                 .addClass('titre_news')
+		      	         .attr('href',decodeEntities(res[i].url))
+		                 .attr('target','_blank')
+		                 .text(res[i].titre)
+		                 .appendTo(p);
 
-		$(document.createElement('span'))
-			.addClass('date_news')
-			.text(res[i].date)
-			.appendTo(p);
+		        $(document.createElement('span'))
+		                  .addClass('date_news')
+		                  .text(format(res[i].date))
+		                  .appendTo(p);
+			
+			let span = $(document.createElement('span'))
+				.addClass('action_news');
 
-		$(document.createElement('span'))
-			.addClass('action_news')
-			.on('click',function(){
-				sauver_nouvelle(p);
-			}).appendTo(p);
+			let img = $(document.createElement('img'));
+			console.log(indexOf(titre_recherche,res[i].titre));
+			if(indexOf(titre_recherche,res[i].titre) == -1){
+				span.on('click',function(){
+					sauver_nouvelle(this);
+				});
 
-		$(document.createElement('img'))
-			.attr('src','horloge15.jpg')
-			.appendTo(p);
+				img.attr('src','horloge15.jpg')
+					.appendTo(span);
 
+				span.appendTo(p);
+			}else{
+				span.on('click',function(){
+					supprimer_nouvelle(this);
+				})
+
+				img.attr('src','disk15.jpg')
+					.appendTo(span);
+
+				span.appendTo(p);
+			}
 		p.appendTo('#resultats');
 	}
 }
 
 
 function sauver_nouvelle(e) {
+	e.firstChild.setAttribute('src','disk15.jpg');
+	e.setAttribute('onclick','supprimer_nouvelle(this)');
+	
+	var object = {
+		title : e.parentNode.firstChild.textContent,
+		date : e.parentNode.firstChild.nextSibling.textContent,
+		url : e.parentNode.firstChild.getAttribute('href')
+	};
+
+	if(indexOf(recherche_courante_news,object) == -1){
+		recherche_courante_news.push(object);
+	}
+
+	$.cookie($('#zone_saisie').val(),JSON.stringify(recherche_courante_news),{
+		expires: 1000
+	})
 }
 
 
 function supprimer_nouvelle(e) {
+	e.firstChild.setAttribute('src','horloge15.jpg');
+	e.setAttribute('onclick','sauver_nouvelle(this)');
+
+	var object = {
+		title : e.parentNode.firstChild.textContent,
+		date : e.parentNode.firstChild.nextSibling.textContent,
+		url : e.parentNode.firstChild.getAttribute('href')
+	}
+		let index = recherche_courante_news.indexOf(object);
+		recherche_courante_news.splice(index, 1);
+		$.cookie($('#zone_saisie').val(),JSON.stringify(recherche_courante_news));
 }
 
