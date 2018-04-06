@@ -123,6 +123,7 @@ let view = new function() {
 	this.updateResults = function(news) {
 		$('#wait').css('display', 'none');
 		let r = $('#resultats');
+		r.empty();
 
 		for(var i = 0; i < news.length; i++) {
 			view.createNews(news[i])
