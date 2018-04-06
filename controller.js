@@ -31,9 +31,16 @@ let controller = new function() {
 	}
 
 	this.updateResults = function(results) {
-		if(model.setSearchNews(results)) {
-			view.updateResults(results);
-		}
+		let news = model.queryNews(results);
+		view.updateResults(news);
+	}
+
+	this.saveNews = function(news) {
+		model.saveNews(news);
+	}
+
+	this.removeNews = function(news) {
+		model.removeNews(news);
 	}
 }
 

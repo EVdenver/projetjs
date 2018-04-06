@@ -1,16 +1,4 @@
 
-function decodeHtmlEntity(str) {
-  return str.replace(/&#(\d+);/g, function(match, dec) {
-    return String.fromCharCode(dec);
-  });
-}
-
-function decodeEntities(encodedString) {
-    var textArea = document.createElement('textarea');
-    textArea.innerHTML = encodedString;
-    return decodeHtmlEntity(textArea.value);
-}
-
 let model = new function() {
 	this.searches = [];
 	this.search;
@@ -20,20 +8,10 @@ let model = new function() {
 		this.unserializeSearches();
 		this.unserializeSearch();
 		this.unserializeSearchNews();
-	}
 
-	this.unserializeArray = function(name) {
-		var array = JSON.parse(localStorage.getItem(name));
-
-		if(array == null) {
-			array = [];
-		}
-
-		return array;
-	}
-
-	this.serializeArray = function(name, array) {
-		localStorage.setItem(name, JSON.stringify(array));
+		console.log(this.searches);
+		console.log(this.search);
+		console.log(this.searchNews);
 	}
 
 	this.unserializeSearch = function() {
@@ -41,11 +19,13 @@ let model = new function() {
 	}
 
 	this.unserializeSearches = function() {
-		this.searches = this.unserializeArray('searches');
+		this.searches = JSON.parse(localStorage.getItem('searches'));
+		if(this.searches == null)
+			this.searches = [];
 	}
 
 	this.serializeSearches = function() {
-		this.serializeArray('searches', this.searches);
+		localStorage.setItem('searches', JSON.stringify(this.searches));
 	}
 
 	this.serializeSearch = function() {
@@ -53,11 +33,13 @@ let model = new function() {
 	}
 
 	this.unserializeSearchNews = function() {
-		this.searchNews = this.unserializeArray('searchNews');
+		this.searchNews = JSON.parse(localStorage.getItem('searchNews'));
+		if(this.searchNews == null)
+			this.searchNews = {};
 	}
 
 	this.serializeSearchNews = function() {
-		this.serializeArray('searchNews', this.searchNews);
+		localStorage.setItem('searchNews', JSON.stringify(this.searchNews));
 	}
 
 	this.saveSearch = function(value) {
@@ -75,7 +57,6 @@ let model = new function() {
 	this.removeSearch = function(value) {
 		let index = this.searches.indexOf(value);
 		this.searches.splice(index, 1);
-
 		this.serializeSearches();
 
 		return true;
@@ -88,16 +69,47 @@ let model = new function() {
 		return true;
 	}
 
-	this.setSearchNews = function(results) {
-		for(var i = 0; i < results.length; i++) {
-			console.log(results[i]);
-			results[i].url = decodeEntities(results[i].url);
-			console.log(results[i]);
+	this.saveNews = function(news) {
+		if(this.searchNews[this.search] == undefined) {
+			this.searchNews[this.search] = [];
 		}
-		this.searchNews = results
-		this.serializeSearchNews();
 
-		return true;
+		this.searchNews[this.search].push(news);
+
+		this.serializeSearchNews();
+	}
+
+	this.removeNews = function(news) {
+		let list = this.searchNews[this.search];
+
+		if(list != undefined) {
+			let index = indexOf(list, news);
+
+			if(index > -1) {
+				list.splice(index, 1);
+			}
+		}
+
+		this.serializeSearchNews();
+	}
+
+	this.queryNews = function(results) {
+		for(var i = 0; i < results.length; i++) {
+			var j = 0;
+			results[i].date = format(results[i].date);
+			results[i].url = decodeEntities(results[i].url);
+
+			let index = indexOf(this.searchNews[this.search], results[i]);
+
+			console.log(this.searchNews[this.search]);
+			console.log(index);
+			if(index != -1)
+				results[i].saved = true;
+			else
+				results[i].saved = undefined;
+		}
+
+		return results;
 	}
 }
 

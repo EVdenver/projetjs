@@ -62,24 +62,42 @@ let view = new function() {
 			.text(news.date)
 			.appendTo(p);
 
-		let img = $(document.createElement('img'))
-			.attr('src', 'images/horloge15.jpg');
+		let img = $(document.createElement('img'));
+		let span = $(document.createElement('span'))
+			.addClass('action_news');
 		var action;
 
-		let span = $(document.createElement('span'))
-			.addClass('action_news')
-			.click(action = function() {
+		if(news.saved) {
+			img.attr('src', 'images/disk15.jpg');
+
+			span.click(action = function() {
 				span.off();
-				view.saveNews(news);
+				controller.removeNews(news);
+				img.attr('src', 'images/horloge15.jpg');
+				span.click(function() {
+					span.off();
+					controller.saveNews(news);
+					img.attr('src', 'images/disk15.jpg');
+					span.click(action);
+				});
+			});
+		} else {
+			img.attr('src', 'images/horloge15.jpg');
+
+			span.click(action = function() {
+				span.off();
+				controller.saveNews(news);
 				img.attr('src', 'images/disk15.jpg');
 				span.click(function() {
 					span.off();
-					view.removeNews(news);
+					controller.removeNews(news);
 					img.attr('src', 'images/horloge15.jpg');
 					span.click(action);
 				});
-			}).appendTo(p);
+			});
+		}
 
+		span.appendTo(p);
 		img.appendTo(span);
 
 		return p;
@@ -94,14 +112,6 @@ let view = new function() {
 		}
 	}
 
-	this.saveNews = function(news) {
-		console.log('save' + news.titre);
-	}
-
-	this.removeNews = function(news) {
-		console.log('remove' + news.titre);
-	}
-
 	this.searchNews = function() {
 		let value = $('#zone_saisie').val();
 
@@ -110,12 +120,12 @@ let view = new function() {
 		controller.searchNews(value);
 	}
 
-	this.updateResults = function(results) {
+	this.updateResults = function(news) {
 		$('#wait').css('display', 'none');
 		let r = $('#resultats');
 
-		for(var i = 0; i < results.length; i++) {
-			view.createNews(results[i])
+		for(var i = 0; i < news.length; i++) {
+			view.createNews(news[i])
 				.appendTo(r);
 		}
 	}
