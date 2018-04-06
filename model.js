@@ -66,6 +66,12 @@ let model = new function() {
 		this.search = value;
 		this.serializeSearch();
 
+		// Inutile, la recherche affichera les déjà sauvés aussi
+		//if(this.searchNews[this.search] != undefined)
+		//	controller.setSaved(this.searchNews[this.search]);
+
+		controller.searchNews(this.search);
+
 		return true;
 	}
 
@@ -99,14 +105,16 @@ let model = new function() {
 			results[i].date = format(results[i].date);
 			results[i].url = decodeEntities(results[i].url);
 
-			let index = indexOf(this.searchNews[this.search], results[i]);
+			if(this.searchNews[this.search] != undefined) {
+				let index = indexOf(this.searchNews[this.search], results[i]);
 
-			console.log(this.searchNews[this.search]);
-			console.log(index);
-			if(index != -1)
-				results[i].saved = true;
-			else
+				if(index != -1)
+					results[i].saved = true;
+				else
+					results[i].saved = undefined;
+			} else {
 				results[i].saved = undefined;
+			}
 		}
 
 		return results;

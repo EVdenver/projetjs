@@ -35,6 +35,13 @@ let controller = new function() {
 		view.updateResults(news);
 	}
 
+	this.setSaved = function(news) {
+		view.updateResults(news.map(function(element) {
+			element.saved = true;
+			return element;
+		}));
+	}
+
 	this.saveNews = function(news) {
 		model.saveNews(news);
 	}
